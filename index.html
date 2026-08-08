@@ -1,0 +1,581 @@
+<meta charset="utf-8" />
+<title>AFTERGLOW — for nights that refuse to end</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  /*
+    Deliberate single-theme piece: AFTERGLOW is a nocturnal brand —
+    the page commits to its own dark, grainy "after dark" world rather
+    than adapting to the viewer's OS light/dark preference.
+  */
+  :root { color-scheme: dark; }
+
+  :root {
+    --ink: #16110d;       /* near-black warm ground */
+    --surface: #241811;   /* raised dark panel */
+    --cream: #f1e6d6;     /* paper / primary text on dark */
+    --cream-dim: #cabca9;
+    --rust: #c1502c;      /* burnt orange accent */
+    --rust-deep: #8a3a20;
+    --dust: #d1a79b;      /* dusty pink accent */
+    --glow: #e8935a;
+
+    --display: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", Consolas, monospace;
+    --hand: "Segoe Print", "Bradley Hand", "Apple Chancery", cursive;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+
+  body {
+    margin: 0;
+    background: var(--ink);
+    color: var(--cream);
+    font-family: var(--body);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  a { color: inherit; }
+  img, svg { display: block; max-width: 100%; }
+
+  /* film-grain overlay, fixed over everything */
+  .grain {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    pointer-events: none;
+    opacity: 0.16;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  .wrap { max-width: 74rem; margin: 0 auto; padding: 0 1.5rem; }
+
+  /* ---------- Nav ---------- */
+  .site-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(22, 17, 13, 0.82);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(241, 230, 214, 0.1);
+  }
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 0;
+    gap: 1rem;
+  }
+  .wordmark-sm {
+    font-family: var(--display);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    font-size: 1.05rem;
+    text-decoration: none;
+    color: var(--cream);
+  }
+  .nav-links {
+    display: flex;
+    gap: 1.75rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .nav-links a { text-decoration: none; color: var(--cream-dim); transition: color 160ms ease; }
+  .nav-links a:hover { color: var(--rust); }
+  @media (max-width: 34rem) { .nav-links { display: none; } }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 0.65rem 1.15rem;
+    border-radius: 999px;
+    background: var(--rust);
+    color: var(--cream);
+    white-space: nowrap;
+    transition: transform 160ms ease, background 160ms ease;
+  }
+  .btn:hover { background: var(--glow); transform: translateY(-1px); }
+  .btn-sm { padding: 0.5rem 0.9rem; font-size: 0.66rem; }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    position: relative;
+    padding: 5rem 0 6rem;
+    text-align: center;
+    overflow: hidden;
+  }
+  .glow-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(70px);
+    opacity: 0.55;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .glow-1 { width: 26rem; height: 26rem; background: var(--rust); top: -10rem; left: 50%; transform: translateX(-70%); }
+  .glow-2 { width: 20rem; height: 20rem; background: var(--dust); bottom: -8rem; right: 10%; opacity: 0.35; }
+
+  .hero > .wrap { position: relative; z-index: 1; }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--cream-dim);
+    max-width: 26rem;
+    margin: 0 auto 1.75rem;
+  }
+  .wordmark {
+    font-family: var(--display);
+    font-weight: 800;
+    text-transform: uppercase;
+    line-height: 0.86;
+    letter-spacing: -0.035em;
+    font-size: clamp(3.6rem, 15vw, 9.5rem);
+    margin: 0;
+    background: linear-gradient(180deg, var(--cream) 55%, var(--dust) 130%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .tagline {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--rust);
+    margin: 1.5rem 0 2.25rem;
+  }
+
+  .stamp {
+    position: absolute;
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border: 1px solid rgba(241, 230, 214, 0.4);
+    border-radius: 999px;
+    padding: 0.35rem 0.75rem;
+    color: var(--cream-dim);
+    z-index: 2;
+  }
+  .stamp-a { top: 12%; left: 6%; transform: rotate(-9deg); }
+  .stamp-b { bottom: 8%; right: 8%; transform: rotate(6deg); }
+  @media (max-width: 40rem) { .stamp { display: none; } }
+
+  /* ---------- Checker divider ---------- */
+  .checker {
+    height: 22px;
+    background-image:
+      linear-gradient(45deg, var(--rust-deep) 25%, transparent 25%, transparent 75%, var(--rust-deep) 75%),
+      linear-gradient(45deg, var(--rust-deep) 25%, transparent 25%, transparent 75%, var(--rust-deep) 75%);
+    background-color: var(--rust);
+    background-size: 22px 22px;
+    background-position: 0 0, 11px 11px;
+  }
+
+  /* ---------- Cover art + description ---------- */
+  .spread {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3.5rem;
+    align-items: center;
+    padding: 5.5rem 0;
+  }
+  @media (max-width: 48rem) { .spread { grid-template-columns: 1fr; gap: 3rem; padding: 3.5rem 0; } }
+
+  .art-stack { position: relative; padding: 1.5rem 0 1.5rem 1.5rem; }
+  .cover {
+    aspect-ratio: 1 / 1;
+    width: 82%;
+    border-radius: 4px;
+    transform: rotate(-4deg);
+    box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.6);
+    background:
+      repeating-radial-gradient(circle at 36% 62%, rgba(20,12,8,0.9) 0 3px, rgba(232,147,90,0.5) 3px 5px, rgba(20,12,8,0.9) 5px 8px),
+      repeating-radial-gradient(circle at 30% 68%, transparent 0 10px, rgba(193,80,44,0.18) 10px 12px),
+      radial-gradient(circle at 70% 16%, rgba(232,147,90,0.55), transparent 45%),
+      linear-gradient(160deg, #150e09, #2c1c11 55%, #472616);
+    position: relative;
+    overflow: hidden;
+  }
+  .cover-streak {
+    position: absolute;
+    top: 2%;
+    left: 9%;
+    width: 3px;
+    height: 82%;
+    background: linear-gradient(180deg, var(--rust) 0%, var(--glow) 60%, transparent 100%);
+    box-shadow: 0 0 14px 3px rgba(232,147,90,0.65);
+    transform: rotate(30deg);
+    transform-origin: top center;
+    border-radius: 2px;
+    z-index: 1;
+  }
+  .cover::before {
+    /* metallic sphere glint — a generic pooling-light motif, not copied artwork */
+    content: "";
+    position: absolute;
+    left: 34%;
+    top: 64%;
+    width: 24%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle at 32% 28%, #fbf4e4 0%, #d9c9b4 30%, #7a5f47 70%, #1e130b 100%);
+    box-shadow: 0 0 26px 8px rgba(232,147,90,0.5);
+    z-index: 2;
+  }
+  .cover::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(115deg, rgba(255,255,255,0.05) 0 2px, transparent 2px 6px);
+    z-index: 1;
+  }
+  .cover-label {
+    position: absolute;
+    left: 1.1rem;
+    bottom: 1.1rem;
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--cream);
+    background: rgba(22, 17, 13, 0.55);
+    padding: 0.3rem 0.6rem;
+    border-radius: 0.25rem;
+    z-index: 3;
+  }
+  .neon {
+    position: absolute;
+    right: -0.5rem;
+    bottom: -2.5rem;
+    width: 55%;
+    aspect-ratio: 5 / 4;
+    border-radius: 4px;
+    overflow: hidden;
+    transform: rotate(5deg);
+    box-shadow: 0 24px 50px -18px rgba(0, 0, 0, 0.65);
+    border: 1px solid rgba(232,147,90,0.22);
+    background:
+      radial-gradient(circle at 50% 22%, rgba(232,147,90,1) 0%, rgba(193,80,44,0.65) 30%, rgba(50,24,14,0.55) 55%, rgba(8,5,4,0.98) 78%),
+      linear-gradient(180deg, #070503, #140d09 85%);
+  }
+  .neon::before {
+    /* inset frame line, evoking a printed sleeve border — generic device */
+    content: "";
+    position: absolute;
+    inset: 9% 7%;
+    border: 1px solid rgba(241,230,214,0.16);
+    pointer-events: none;
+    z-index: 2;
+  }
+  .neon::after {
+    /* fine grain, matching the page's film-grain treatment */
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0.6;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    z-index: 3;
+  }
+  .washi {
+    position: absolute;
+    top: -0.6rem;
+    left: 2.4rem;
+    width: 4.5rem;
+    height: 1.4rem;
+    background: rgba(209, 167, 155, 0.55);
+    transform: rotate(-8deg);
+    z-index: 2;
+  }
+
+  .spread-copy .kicker {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--rust);
+    margin-bottom: 0.9rem;
+    display: inline-block;
+  }
+  .spread-copy h2 {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(1.7rem, 3.4vw, 2.5rem);
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+    margin: 0 0 1.1rem;
+    text-wrap: balance;
+  }
+  .spread-copy p {
+    color: var(--cream-dim);
+    max-width: 30rem;
+    margin: 0 0 1.75rem;
+  }
+  .badge-round {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 5.4rem;
+    height: 5.4rem;
+    border-radius: 50%;
+    border: 1px dashed rgba(241, 230, 214, 0.45);
+    font-family: var(--hand);
+    font-size: 0.85rem;
+    text-align: center;
+    line-height: 1.15;
+    transform: rotate(-8deg);
+    color: var(--dust);
+    float: right;
+    margin: -1rem 0 1rem 1rem;
+  }
+
+  /* ---------- Tracklist ---------- */
+  .tracks {
+    padding: 5rem 0 6rem;
+  }
+  .tracks-head { text-align: center; margin-bottom: 3rem; }
+  .tracks-head h2 {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(1.6rem, 3.2vw, 2.3rem);
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+  .tracks-head p { color: var(--cream-dim); font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.06em; margin-top: 0.6rem; }
+
+  .sides {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+  @media (max-width: 48rem) { .sides { grid-template-columns: 1fr; } }
+
+  .side-panel {
+    background: var(--surface);
+    border: 1px solid rgba(241, 230, 214, 0.08);
+    border-radius: 0.6rem;
+    padding: 1.75rem 1.5rem 0.5rem;
+  }
+  .side-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(241, 230, 214, 0.12);
+    margin-bottom: 0.25rem;
+  }
+  .side-name {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 1.25rem;
+    letter-spacing: -0.01em;
+  }
+  .side-time { font-family: var(--mono); font-size: 0.72rem; color: var(--rust); }
+  .side-note {
+    font-family: var(--hand);
+    font-size: 1rem;
+    color: var(--dust);
+    transform: rotate(-2deg);
+    display: inline-block;
+    margin: 0.6rem 0 0.3rem;
+  }
+
+  .track {
+    display: grid;
+    grid-template-columns: 1.6rem 1fr auto;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 0.7rem 0.4rem;
+    border-radius: 0.4rem;
+    text-decoration: none;
+    color: inherit;
+    transition: background 150ms ease;
+  }
+  .track:hover { background: rgba(193, 80, 44, 0.16); }
+  .track .num { font-family: var(--mono); font-size: 0.72rem; color: var(--cream-dim); }
+  .track:hover .num { color: var(--rust); }
+  .track .meta { min-width: 0; }
+  .track .title { font-weight: 600; font-size: 0.95rem; }
+  .track .artist { font-size: 0.78rem; color: var(--cream-dim); }
+  .track .dur { font-family: var(--mono); font-size: 0.75rem; color: var(--cream-dim); }
+
+  /* ---------- Hook / closing CTA ---------- */
+  .hook {
+    position: relative;
+    padding: 6rem 0 7rem;
+    text-align: center;
+    background: var(--surface);
+    border-top: 1px solid rgba(241, 230, 214, 0.08);
+    overflow: hidden;
+  }
+  .hook h2 {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(1.8rem, 4.5vw, 3rem);
+    line-height: 1.08;
+    max-width: 38rem;
+    margin: 0 auto 1rem;
+    text-wrap: balance;
+  }
+  .hook p { color: var(--cream-dim); max-width: 28rem; margin: 0 auto 2rem; }
+  .hook-stamp {
+    position: absolute;
+    right: 6%;
+    bottom: 8%;
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 1.4rem;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    color: rgba(241, 230, 214, 0.14);
+    transform: rotate(-8deg);
+    border: 2px solid rgba(241, 230, 214, 0.14);
+    padding: 0.3rem 0.9rem;
+    border-radius: 0.4rem;
+  }
+  @media (max-width: 40rem) { .hook-stamp { display: none; } }
+
+  footer {
+    padding: 2.25rem 0 3rem;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    color: var(--cream-dim);
+  }
+  footer .dev-note { display: block; margin-top: 0.4rem; opacity: 0.55; }
+</style>
+
+<div class="grain"></div>
+
+<nav class="site-nav">
+  <div class="wrap nav-inner">
+    <a class="wordmark-sm" href="#top">AFTERGLOW</a>
+    <ul class="nav-links">
+      <li><a href="#tracks">side a</a></li>
+      <li><a href="#tracks">side b</a></li>
+      <li><a href="#about">about</a></li>
+    </ul>
+    <a class="btn btn-sm" href="#" data-listen-link>listen now →</a>
+  </div>
+</nav>
+
+<main id="top">
+  <section class="hero">
+    <div class="glow-blob glow-1"></div>
+    <div class="glow-blob glow-2"></div>
+    <span class="stamp stamp-a">side a · 11:47pm</span>
+    <span class="stamp stamp-b">side b · 2:13am</span>
+    <div class="wrap">
+      <p class="eyebrow">Music for the hours when the day is over but your mind isn't.</p>
+      <h1 class="wordmark">Afterglow</h1>
+      <p class="tagline">For nights that refuse to end.</p>
+      <a class="btn" href="#" data-listen-link>listen now →</a>
+    </div>
+  </section>
+
+  <div class="checker"></div>
+
+  <section class="spread" id="about">
+    <div class="wrap" style="display:contents;">
+      <div class="art-stack">
+        <div class="washi"></div>
+        <div class="cover">
+          <span class="cover-streak"></span>
+          <span class="cover-label">afterglow vol. 1</span>
+        </div>
+        <div class="neon"></div>
+      </div>
+      <div class="spread-copy">
+        <span class="badge-round">curated<br/>after<br/>dark</span>
+        <span class="kicker">The concept</span>
+        <h2>A mixtape for the drive home and the hours after it.</h2>
+        <p>
+          Afterglow starts where the night's plans end — car windows, half-lit rooms, the
+          fifteen minutes before you admit you're not going to sleep. Side A gets you home.
+          Side B keeps you up. Press play whenever the day is officially, unofficially over.
+        </p>
+        <a class="btn btn-sm" href="#" data-listen-link>listen now →</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="tracks" id="tracks">
+    <div class="wrap">
+      <div class="tracks-head">
+        <h2>The story so far</h2>
+        <p>10 tracks · 38 min · updated weekly</p>
+      </div>
+      <div class="sides">
+        <div class="side-panel">
+          <div class="side-head">
+            <span class="side-name">Side A</span>
+            <span class="side-time">11:47 PM</span>
+          </div>
+          <span class="side-note">getting home</span>
+          <div>
+            <a class="track" href="#"><span class="num">01</span><span class="meta"><span class="title">Slow Motion</span><br/><span class="artist">LÉON</span></span><span class="dur">3:42</span></a>
+            <a class="track" href="#"><span class="num">02</span><span class="meta"><span class="title">After Hours</span><br/><span class="artist">RAYE</span></span><span class="dur">4:05</span></a>
+            <a class="track" href="#"><span class="num">03</span><span class="meta"><span class="title">Velvet Sky</span><br/><span class="artist">Noa James</span></span><span class="dur">3:18</span></a>
+            <a class="track" href="#"><span class="num">04</span><span class="meta"><span class="title">Call Me When It Rains</span><br/><span class="artist">Sienna Vale</span></span><span class="dur">3:51</span></a>
+            <a class="track" href="#"><span class="num">05</span><span class="meta"><span class="title">Amber Light</span><br/><span class="artist">Théo Reyes</span></span><span class="dur">4:12</span></a>
+          </div>
+        </div>
+        <div class="side-panel">
+          <div class="side-head">
+            <span class="side-name">Side B</span>
+            <span class="side-time">2:13 AM</span>
+          </div>
+          <span class="side-note">not going to sleep</span>
+          <div>
+            <a class="track" href="#"><span class="num">01</span><span class="meta"><span class="title">Static &amp; Stars</span><br/><span class="artist">Marlowe Grey</span></span><span class="dur">3:29</span></a>
+            <a class="track" href="#"><span class="num">02</span><span class="meta"><span class="title">Say It Twice</span><br/><span class="artist">Junah</span></span><span class="dur">3:57</span></a>
+            <a class="track" href="#"><span class="num">03</span><span class="meta"><span class="title">Low Beams</span><br/><span class="artist">Ivy Solace</span></span><span class="dur">4:21</span></a>
+            <a class="track" href="#"><span class="num">04</span><span class="meta"><span class="title">Afterthought</span><br/><span class="artist">Dax Rivera</span></span><span class="dur">3:33</span></a>
+            <a class="track" href="#"><span class="num">05</span><span class="meta"><span class="title">Glow Fade Out</span><br/><span class="artist">Wren Ashby</span></span><span class="dur">4:44</span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="checker"></div>
+
+  <section class="hook">
+    <div class="wrap">
+      <h2>Ever stayed up just to keep the night from ending?</h2>
+      <p>That's the whole playlist. No skips, no small talk — just the hours nobody plans for.</p>
+      <a class="btn" href="#" data-listen-link>listen now →</a>
+    </div>
+    <span class="hook-stamp">Afterglow</span>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      AFTERGLOW — for nights that refuse to end
+      <span class="dev-note">Replace the four [data-listen-link] hrefs with your Spotify / Apple Music / YouTube playlist URL.</span>
+    </div>
+  </footer>
+</main>
